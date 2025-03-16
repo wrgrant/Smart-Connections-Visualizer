@@ -18,6 +18,12 @@ const prod = (process.argv[2] === "production");
 const package_json = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json')));
 const manifest_json = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'manifest.json')));
 manifest_json.version = package_json.version;
+
+// Ensure dist directory exists
+if (!fs.existsSync('./dist')) {
+    fs.mkdirSync('./dist', { recursive: true });
+}
+
 fs.writeFileSync(path.join(process.cwd(), 'manifest.json'), JSON.stringify(manifest_json, null, 2));
 fs.writeFileSync(path.join(process.cwd(), './dist/manifest.json'), JSON.stringify(manifest_json, null, 2));
 
@@ -29,7 +35,7 @@ const copy_to_plugins = {
 			const plugin_path = path.join(process.env.OBSIDIAN_PLUGINS_PATH, "smart-connections-visualizer");
 			
 			if (!fs.existsSync(plugin_path)) {
-				fs.mkdirSync(plugin_path);
+				fs.mkdirSync(plugin_path, { recursive: true });
 			}
 			// copy manifest and styles to dist folder
 			fs.copyFileSync("./manifest.json", "./dist/manifest.json");
